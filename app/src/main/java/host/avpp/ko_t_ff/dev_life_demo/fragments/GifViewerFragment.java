@@ -13,9 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -54,6 +56,23 @@ public class GifViewerFragment extends Fragment {
     private ConstraintLayout mainLO, errorLO;
     private ProgressBar loadingPB;
     private Button reloadBtn;
+
+    private interface ViewModeApplier<T> {
+        RequestBuilder<T> apply(RequestBuilder<T> rb);
+    }
+    private final ViewModeApplier<Drawable> FULL_AREA = new ViewModeApplier<Drawable>() {
+        @Override
+        public RequestBuilder<Drawable> apply(RequestBuilder<Drawable> rb) {
+            return rb.transform(new CenterCrop(), new RoundedCorners((int)getResources().getDimension(R.dimen.fragment_gif_view_corner_radius)));
+        }
+    };
+    private final ViewModeApplier<Drawable> FULL_IMAGE = new ViewModeApplier<Drawable>() {
+        @Override
+        public RequestBuilder<Drawable> apply(RequestBuilder<Drawable> rb) {
+            return rb.transform(new FitCenter());
+        }
+    };
+    ViewModeApplier<Drawable> currentViewMode = FULL_AREA;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,6 +113,20 @@ public class GifViewerFragment extends Fragment {
                 vm.refresh();
             }
         });
+        outputIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vm.toggleFullAreaMode();
+            }
+        });
+
+        vm.isFullAreaMode().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean mode) {
+                currentViewMode = mode ? FULL_AREA : FULL_IMAGE;
+                vm.refresh();
+            }
+        });
 
         vm.getCurrentGif().observe(getViewLifecycleOwner(), new Observer<Pair<GifInfo, GifViewerFragmentViewModel.Status>>() {
             @Override
@@ -111,11 +144,10 @@ public class GifViewerFragment extends Fragment {
 
                 GifInfo gifInfo = arg.first;
                 descriptionTV.setText(gifInfo.getDescription());
-                Glide.with(GifViewerFragment.this)
+                RequestBuilder<Drawable> rb = Glide.with(GifViewerFragment.this)
                         .load(gifInfo.getGifURL())
-                        .thumbnail(Glide.with(GifViewerFragment.this).load(gifInfo.getPreviewURL()))
-                        .transform(new CenterCrop(), new RoundedCorners((int)getResources().getDimension(R.dimen.fragment_gif_view_corner_radius)))
-                        .listener(new RequestListener<Drawable>() {
+                        .thumbnail(Glide.with(GifViewerFragment.this).load(gifInfo.getPreviewURL()));
+                        currentViewMode.apply(rb).listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 showErrorLoading();

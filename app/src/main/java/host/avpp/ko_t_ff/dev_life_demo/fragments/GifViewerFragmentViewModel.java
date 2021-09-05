@@ -88,4 +88,13 @@ public class GifViewerFragmentViewModel extends ViewModel {
             }
         });
     }
+
+    private final MutableLiveData<Boolean> fullAreaMode = new MutableLiveData<>(true);
+
+    public MutableLiveData<Boolean> isFullAreaMode() {
+        return fullAreaMode;
+    }
+    public void toggleFullAreaMode() {
+        fullAreaMode.setValue(!fullAreaMode.getValue());
+    }
 }
