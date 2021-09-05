@@ -4,4 +4,5 @@
     <dimen name="fragment_gif_view.text_size">30sp</dimen>
     <dimen name="rounded_button.padding">10dp</dimen>
     <dimen name="rounded_button.margin">10dp</dimen>
+    <dimen name="gif_viewer_padding">3dp</dimen>
 </resources>

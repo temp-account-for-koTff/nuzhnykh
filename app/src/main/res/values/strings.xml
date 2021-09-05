@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DevLife Demo</string>
+    <!-- >>> GifViewerFragment >>> -->
+    <string name="gif_viewer_fragment.error_text">Произошла ошибка в процессе загрузки информации об анимации.</string>
+    <string name="gif_viewer_fragment.loading_text">Загрузка...</string>
+    <!-- <<< GifViewerFragment <<< -->
 </resources>
