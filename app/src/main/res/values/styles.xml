@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RoundedButton">
+        <item name="android:background">@drawable/circular_button_state_list</item>
+        <item name="android:layout_margin">@dimen/rounded_button.margin</item>
+        <item name="android:padding">@dimen/rounded_button.padding</item>
+    </style>
+</resources>

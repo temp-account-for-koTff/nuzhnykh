@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true" android:state_pressed="true" android:drawable="@drawable/circular_button_state_pressed_rippled"/>
+    <item android:state_enabled="false" android:drawable="@drawable/circular_button_state_disabled"/>
+    <item android:drawable="@drawable/circular_button_state_enabled"/>
+</selector>

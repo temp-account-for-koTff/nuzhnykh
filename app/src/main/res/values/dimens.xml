@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fragment_gif_view.corner_radius">20dp</dimen>
+    <dimen name="fragment_gif_view.text_size">30sp</dimen>
+    <dimen name="rounded_button.padding">10dp</dimen>
+    <dimen name="rounded_button.margin">10dp</dimen>
+</resources>
