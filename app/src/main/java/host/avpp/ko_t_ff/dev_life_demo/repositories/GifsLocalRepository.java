@@ -34,4 +34,8 @@ public class GifsLocalRepository {
         data.add(gi);
         liveData.setValue(data);
     }
+    public void change(int i, GifInfo gi) {
+        data.set(i, gi);
+        liveData.setValue(data);
+    }
 }

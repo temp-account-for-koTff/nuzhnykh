@@ -58,14 +58,17 @@ public class GifViewerFragmentViewModel extends ViewModel {
                 return Transformations.switchMap(index, new Function<Integer, LiveData<Pair<GifInfo, Status>>>() {
                     @Override
                     public LiveData<Pair<GifInfo, Status>> apply(Integer idx) {
-                        if (idx < allData.size()) {
+                        if (idx < allData.size() && allData.get(idx) != null) {
                             return new MutableLiveData<>(new Pair<>(allData.get(idx), Status.CACHED));
                         }
                         final MutableLiveData<Pair<GifInfo, Status>> result = new MutableLiveData<>(new Pair<>(null, Status.LOADING));
                         remoteRepository.getRandom(new GifsRemoteRepository.GifInfoLoadedListener() {
                             @Override
                             public void loaded(GifInfo gi) {
-                                localRepository.add(gi);
+                                if (idx < allData.size())
+                                    localRepository.change(idx, gi);
+                                else
+                                    localRepository.add(gi);
                             }
 
                             @Override

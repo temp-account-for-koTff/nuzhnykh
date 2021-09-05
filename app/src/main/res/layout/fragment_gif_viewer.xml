@@ -30,6 +30,7 @@
                 android:textSize="@dimen/fragment_gif_view.text_size"
                 android:background="@drawable/gradient_bg"
                 android:textColor="@color/description_text_color"
+                android:padding="@dimen/description_text_padding"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
@@ -44,12 +45,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/gif_viewer_fragment.error_text"
+                android:textSize="@dimen/fragment_gif_view.text_size"
+                android:padding="@dimen/error_text_padding"
+                android:textAlignment="center"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/gif_viewer_fragment.reload_btn"/>
             <Button
                 android:id="@+id/gif_viewer_fragment.reload_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/gif_viewer_fragment.reload_btn.text"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gif_viewer_fragment.error_tv"

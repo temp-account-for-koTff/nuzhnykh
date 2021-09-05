@@ -1,17 +1,26 @@
 package host.avpp.ko_t_ff.dev_life_demo.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -44,6 +53,7 @@ public class GifViewerFragment extends Fragment {
     private GifViewerFragmentViewModel vm;
     private ConstraintLayout mainLO, errorLO;
     private ProgressBar loadingPB;
+    private Button reloadBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +66,7 @@ public class GifViewerFragment extends Fragment {
         mainLO = v.findViewById(R.id.gif_viewer_fragment_main_area);
         errorLO = v.findViewById(R.id.gif_viewer_fragment_error_area);
         loadingPB = v.findViewById(R.id.gif_viewer_fragment_loading_pb);
+        reloadBtn = v.findViewById(R.id.gif_viewer_fragment_reload_btn);
 
         vm = new ViewModelProvider(requireActivity()).get(GifViewerFragmentViewModel.class);
 
@@ -77,34 +88,64 @@ public class GifViewerFragment extends Fragment {
                 vm.next();
             }
         });
+        reloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vm.refresh();
+            }
+        });
 
         vm.getCurrentGif().observe(getViewLifecycleOwner(), new Observer<Pair<GifInfo, GifViewerFragmentViewModel.Status>>() {
             @Override
             public void onChanged(Pair<GifInfo, GifViewerFragmentViewModel.Status> arg) {
-                if (GifViewerFragmentViewModel.Status.LOADING.equals(arg.second)) {
-                    mainLO.setVisibility(View.VISIBLE);
-                    errorLO.setVisibility(View.INVISIBLE);
-                    loadingPB.setVisibility(View.VISIBLE);
-                    descriptionTV.setText(R.string.gif_viewer_fragment_loading_text);
-                    return;
-                } else if (GifViewerFragmentViewModel.Status.ERROR.equals(arg.second)) {
-                    mainLO.setVisibility(View.INVISIBLE);
-                    errorLO.setVisibility(View.VISIBLE);
-                    loadingPB.setVisibility(View.INVISIBLE);
+                Glide.with(GifViewerFragment.this).clear(outputIV);
+                if (GifViewerFragmentViewModel.Status.ERROR.equals(arg.second)) {
+                    showErrorLoading();
                     return;
                 }
-                mainLO.setVisibility(View.VISIBLE);
-                errorLO.setVisibility(View.INVISIBLE);
-                loadingPB.setVisibility(View.INVISIBLE);
+                showStartLoading();
+                if (GifViewerFragmentViewModel.Status.LOADING.equals(arg.second)) {
+                    descriptionTV.setText(R.string.gif_viewer_fragment_loading_text);
+                    return;
+                }
+
                 GifInfo gifInfo = arg.first;
                 descriptionTV.setText(gifInfo.getDescription());
                 Glide.with(GifViewerFragment.this)
                         .load(gifInfo.getGifURL())
                         .thumbnail(Glide.with(GifViewerFragment.this).load(gifInfo.getPreviewURL()))
-                        .centerCrop()
+                        .transform(new CenterCrop(), new RoundedCorners((int)getResources().getDimension(R.dimen.fragment_gif_view_corner_radius)))
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                showErrorLoading();
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                showLoaded();
+                                return false;
+                            }
+                        })
                         .into(outputIV);
             }
         });
         return v;
+    }
+    private void showErrorLoading() {
+        mainLO.setVisibility(View.INVISIBLE);
+        errorLO.setVisibility(View.VISIBLE);
+        loadingPB.setVisibility(View.INVISIBLE);
+    }
+    private void showStartLoading() {
+        mainLO.setVisibility(View.VISIBLE);
+        errorLO.setVisibility(View.INVISIBLE);
+        loadingPB.setVisibility(View.VISIBLE);
+    }
+    private void showLoaded() {
+        mainLO.setVisibility(View.VISIBLE);
+        errorLO.setVisibility(View.INVISIBLE);
+        loadingPB.setVisibility(View.INVISIBLE);
     }
 }
