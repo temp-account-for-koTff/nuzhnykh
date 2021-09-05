@@ -2,6 +2,7 @@ package host.avpp.ko_t_ff.dev_life_demo.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -116,15 +117,29 @@ public class GifViewerFragment extends Fragment {
         outputIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vm.toggleFullAreaMode();
+                vm.fullAreaMode.toggle();
             }
         });
 
-        vm.isFullAreaMode().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        vm.fullAreaMode.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean mode) {
                 currentViewMode = mode ? FULL_AREA : FULL_IMAGE;
                 vm.refresh();
+            }
+        });
+
+        descriptionTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vm.descriptionEllipsized.toggle();
+            }
+        });
+        vm.descriptionEllipsized.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean ellepsized) {
+                descriptionTV.setEllipsize(ellepsized ? TextUtils.TruncateAt.END : null);
+                descriptionTV.setSingleLine(ellepsized);
             }
         });
 
@@ -146,7 +161,7 @@ public class GifViewerFragment extends Fragment {
                 descriptionTV.setText(gifInfo.getDescription());
                 RequestBuilder<Drawable> rb = Glide.with(GifViewerFragment.this)
                         .load(gifInfo.getGifURL())
-                        .thumbnail(Glide.with(GifViewerFragment.this).load(gifInfo.getPreviewURL()));
+                        .thumbnail(currentViewMode.apply(Glide.with(GifViewerFragment.this).load(gifInfo.getPreviewURL())));
                         currentViewMode.apply(rb).listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

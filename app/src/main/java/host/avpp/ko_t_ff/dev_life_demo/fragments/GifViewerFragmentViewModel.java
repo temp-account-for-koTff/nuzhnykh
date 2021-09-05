@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 import host.avpp.ko_t_ff.dev_life_demo.data.GifInfo;
 import host.avpp.ko_t_ff.dev_life_demo.repositories.GifsLocalRepository;
 import host.avpp.ko_t_ff.dev_life_demo.repositories.GifsRemoteRepository;
+import host.avpp.ko_t_ff.dev_life_demo.utils.SimpleBooleanToggledLiveData;
 
 /**
  * Created by Nuzhnykh Alexey on 05.09.2021.
@@ -89,12 +90,8 @@ public class GifViewerFragmentViewModel extends ViewModel {
         });
     }
 
-    private final MutableLiveData<Boolean> fullAreaMode = new MutableLiveData<>(true);
+    public final SimpleBooleanToggledLiveData fullAreaMode = new SimpleBooleanToggledLiveData(true);
 
-    public MutableLiveData<Boolean> isFullAreaMode() {
-        return fullAreaMode;
-    }
-    public void toggleFullAreaMode() {
-        fullAreaMode.setValue(!fullAreaMode.getValue());
-    }
+    /*Like length in array*/
+    public final SimpleBooleanToggledLiveData descriptionEllipsized = new SimpleBooleanToggledLiveData(true);
 }
