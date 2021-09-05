@@ -39,12 +39,6 @@ public class GifViewerFragment extends Fragment {
     public GifViewerFragment() {
     }
 
-
-    public static GifViewerFragment newInstance(String param1, String param2) {
-        GifViewerFragment fragment = new GifViewerFragment();
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
